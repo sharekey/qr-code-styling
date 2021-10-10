@@ -9,17 +9,20 @@ import defaultOptions, { RequiredOptions } from "./QROptions";
 import sanitizeOptions from "../tools/sanitizeOptions";
 import { Extension, QRCode, Options, DownloadOptions } from "../types";
 import qrcode from "qrcode-generator";
+import Canvas from "react-native-canvas";
 
 export default class QRCodeStyling {
   _options: RequiredOptions;
   _container?: HTMLElement;
   _canvas?: QRCanvas;
+  _RNCanvas: Canvas;
   _svg?: QRSVG;
   _qr?: QRCode;
   _canvasDrawingPromise?: Promise<void>;
   _svgDrawingPromise?: Promise<void>;
 
-  constructor(options?: Partial<Options>) {
+  constructor(canvas: Canvas, options?: Partial<Options>) {
+    this._RNCanvas = canvas;
     this._options = options ? sanitizeOptions(mergeDeep(defaultOptions, options) as RequiredOptions) : defaultOptions;
     this.update();
   }
@@ -54,7 +57,7 @@ export default class QRCodeStyling {
         canvas = this._canvas;
         promise = this._canvasDrawingPromise;
       } else {
-        canvas = new QRCanvas(this._options);
+        canvas = new QRCanvas(this._RNCanvas, this._options);
         promise = canvas.drawQR(this._qr);
       }
 
@@ -77,7 +80,7 @@ export default class QRCodeStyling {
     this._qr.make();
 
     if (this._options.type === drawTypes.canvas) {
-      this._canvas = new QRCanvas(this._options);
+      this._canvas = new QRCanvas(this._RNCanvas, this._options);
       this._canvasDrawingPromise = this._canvas.drawQR(this._qr);
       this._svgDrawingPromise = undefined;
       this._svg = undefined;

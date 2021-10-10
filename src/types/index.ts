@@ -111,6 +111,8 @@ export type Options = {
     errorCorrectionLevel?: ErrorCorrectionLevel;
   };
   imageOptions?: {
+    hideXDots?: number,
+    hideYDots?: number,
     hideBackgroundDots?: boolean;
     imageSize?: number;
     crossOrigin?: string;

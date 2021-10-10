@@ -6,6 +6,7 @@ import QRCornerDot from "../figures/cornerDot/canvas/QRCornerDot";
 import { RequiredOptions } from "./QROptions";
 import gradientTypes from "../constants/gradientTypes";
 import { QRCode, Gradient, FilterFunction } from "../types";
+import Canvas, { Image } from "react-native-canvas";
 
 const squareMask = [
   [1, 1, 1, 1, 1, 1, 1],
@@ -28,14 +29,14 @@ const dotMask = [
 ];
 
 export default class QRCanvas {
-  _canvas: HTMLCanvasElement;
+  _canvas: Canvas;
   _options: RequiredOptions;
   _qr?: QRCode;
   _image?: HTMLImageElement;
 
   //TODO don't pass all options to this class
-  constructor(options: RequiredOptions) {
-    this._canvas = document.createElement("canvas");
+  constructor(canvas: Canvas, options: RequiredOptions) {
+    this._canvas = canvas;
     this._canvas.width = options.width;
     this._canvas.height = options.height;
     this._options = options;
@@ -99,10 +100,10 @@ export default class QRCanvas {
     this.drawDots((i: number, j: number): boolean => {
       if (this._options.imageOptions.hideBackgroundDots) {
         if (
-          i >= (count - drawImageSize.hideXDots) / 2 &&
-          i < (count + drawImageSize.hideXDots) / 2 &&
-          j >= (count - drawImageSize.hideYDots) / 2 &&
-          j < (count + drawImageSize.hideYDots) / 2
+          i >= (count - (this._options.imageOptions.hideXDots ?? drawImageSize.hideXDots)) / 2 &&
+          i < (count + (this._options.imageOptions.hideXDots ?? drawImageSize.hideXDots)) / 2 &&
+          j >= (count - (this._options.imageOptions.hideYDots ?? drawImageSize.hideYDots)) / 2 &&
+          j < (count + (this._options.imageOptions.hideYDots ?? drawImageSize.hideYDots)) / 2
         ) {
           return false;
         }
@@ -357,7 +358,7 @@ export default class QRCanvas {
   loadImage(): Promise<void> {
     return new Promise((resolve, reject) => {
       const options = this._options;
-      const image = new Image();
+      const image = new Image(this._canvas);
 
       if (!options.image) {
         return reject("Image is not defined");
@@ -368,9 +369,9 @@ export default class QRCanvas {
       }
 
       this._image = image;
-      image.onload = (): void => {
+      image.addEventListener('load', (event): void => {
         resolve();
-      };
+      });
       image.src = options.image;
     });
   }
