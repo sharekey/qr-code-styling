@@ -73,7 +73,7 @@ export default class QRSVG {
   async drawQR(qr: QRCode): Promise<void> {
     const count = qr.getModuleCount();
     const minSize = this._size - this._options.margin * 2;
-    const dotSize = Math.floor((minSize / count) * 100) / 100;
+    const dotSize = Math.ceil((minSize / count) * 100) / 100;
     let drawImageSize = {
       hideXDots: 0,
       hideYDots: 0,
@@ -167,7 +167,7 @@ export default class QRSVG {
     }
 
     const minSize = this._size - options.margin * 2;
-    const dotSize = Math.floor((minSize / count) * 100) / 100;
+    const dotSize = Math.ceil((minSize / count) * 100) / 100;
     const xBeginning = Math.floor(((options.width - count * dotSize) / 2) * 100) / 100;
     const yBeginning = Math.floor(((options.height - count * dotSize) / 2) * 100) / 100;
     const dot = new QRDot({ svg: this._element, type: options.dotsOptions.type });
@@ -228,7 +228,7 @@ export default class QRSVG {
 
     const count = this._qr.getModuleCount();
     const minSize = this._size - options.margin * 2;
-    const dotSize = Math.floor((minSize / count) * 100) / 100;
+    const dotSize = Math.ceil((minSize / count) * 100) / 100;
     const cornersSquareSize = dotSize * 7;
     const cornersDotSize = dotSize * 3;
     const xBeginning = Math.floor(((options.width - count * dotSize) / 2) * 100) / 100;
